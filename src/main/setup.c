@@ -244,6 +244,10 @@ void SessionDtor(int code, char *state)
   ChannelsDtor(s_manifest);
   ZTrace("[channels deallocated]");
 
+  ZTrace("[report]");
+  zPluginManagerDtor();
+  ZTrace("[plugins unloaded]");
+
   ZTrace("[untrusted context closed]");
   ManifestDtor(s_manifest); /* dispose manifest and channels */
   ZTrace("[manifest deallocated]");
