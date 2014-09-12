@@ -1,0 +1,18 @@
+=Channel = /dev/stdin, /dev/stdin, 0, 0, 1, 1, 0, 0
+=Channel = /dev/stdout, /dev/stdout, 0, 0, 0, 0, 1, 1
+Channel = /dev/stderr, /dev/stderr, 0, 0, 0, 0, 1, 1
+
+Channel = opaque:bogus, /dev/stdout, 0, 1, 0, 0, 100, 1000
+Channel = opaque:bogus:10.0.0.2:56645, /dev/stdin, 0, 1, 100, 1000, 0, 0
+
+=====================================================================
+== Plugin Info
+=====================================================================
+Plugin_dir = PWD/bin
+Plugin     = libplugintest.so
+
+
+Version = 20140509
+Memory = 33554432, 0
+Timeout = 1
+Program = PWD/bin/hello_world.nexe
