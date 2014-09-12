@@ -301,10 +301,17 @@ get_plugin_by_channel( struct ChannelDesc *channel)
     temp = (plugin_context_t *)(g_ptr_array_index( plugin_manager->plugin_list, index));
     tokens = g_strsplit( channel->name, ":", 2);
 
+    //////-
     if( !strcmp( tokens[0], temp->protocol))
     {
       retval = temp;
       retval->ref_count++;
+
+      //////-
+      if( strlen( tokens[1]) > 0)
+      {
+        channel->name = g_strdup( tokens[1]);
+      }
 
       break;
     }
