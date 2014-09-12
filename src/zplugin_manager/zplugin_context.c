@@ -22,7 +22,6 @@ zplugin_load( char *plugin_path)
 {
   plugin_context_t *retval   = NULL;
   char             *error    = NULL;
-  GString          *init_str = NULL;
   void             *handle   = NULL;
   void (*init_func)( plugin_context_t *);
 
@@ -37,8 +36,7 @@ zplugin_load( char *plugin_path)
 
   //////
   //-
-  // init_str =  g_string_new( "init_zplugin");
-  init_func = dlsym( handle, "init_zplugin"); //init_str->str);
+  init_func = dlsym( handle, "init_zplugin");
   if( (error = dlerror()) != NULL)
   {
     goto plugin_load_error;
@@ -49,7 +47,7 @@ zplugin_load( char *plugin_path)
   retval = (plugin_context_t *)g_malloc0( sizeof( plugin_context_t));
   if( !retval)
   {
-    fprintf( stderr, "[!] Unable to allocate memory for plugin...\n");
+    error = "[!] Unable to allocate memory for plugin...\n";
     goto plugin_load_error;
   }
 
@@ -64,7 +62,7 @@ zplugin_load( char *plugin_path)
   //- rjm TODO verify plugin api version
   if( version.major != retval->version.major)
   {
-    fprintf( stderr, "[!] plugin using different plugin api version...\n");
+    error = "[!] plugin using different plugin api version...\n";
 
     zplugin_unload( retval);
     goto plugin_load_error;
@@ -83,10 +81,6 @@ plugin_load_error:
   }
 
   if( retval)
-  {
-    g_free( retval);
-  }
-  if( init_str)
   {
     g_free( retval);
   }
