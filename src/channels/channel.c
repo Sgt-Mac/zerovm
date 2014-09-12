@@ -200,6 +200,9 @@ static void ChannelCtor(struct ChannelDesc *channel)
     channel->plugin = plugin_manager->get_plugin_by_channel( channel);
     ZLOGFAIL( channel->plugin == 0,
       ENOENT, "Unable to find supported Channel Protocol Plugin");
+    channel->plugin->open( channel);
+    ZLOGFAIL(channel->handle == NULL, EIO, "cannot open %s", channel->name);
+    ZLOGS(LOG_DEBUG, "%s opened", channel->alias);
   }
 
   /* mark channel as mounted */
