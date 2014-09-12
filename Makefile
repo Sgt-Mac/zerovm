@@ -6,10 +6,10 @@ TAG_ENCRYPTION ?= G_CHECKSUM_SHA1
 CCFLAGS0=-c -m64 -fPIC -D_GNU_SOURCE -DTAG_ENCRYPTION=$(TAG_ENCRYPTION) -I. -I/usr/local/include $(GLIB)
 
 CXXFLAGS0=-m64 -Wno-variadic-macros $(GLIB)
-LIBS=-lglib-2.0 -lvalidator -lstdc++ -L/usr/local/lib -lzvm_zpipes -lzbroker_cli -lzmtp
+LIBS=-lglib-2.0 -lvalidator -lstdc++ -L/usr/local/lib -lzvm_zpipes -lzbroker_cli -lzmtp -ldl
 TESTLIBS=-Llib/gtest -lgtest $(LIBS)
 
-CCFLAGS1=-std=gnu89 -Wdeclaration-after-statement $(FLAGS0) $(CCFLAGS0)
+CCFLAGS1=-std=gnu89 -Wdeclaration-after-statement $(FLAGS0) $(CCFLAGS0) 
 CCFLAGS2=-Wextra -Wswitch-enum -Wsign-compare $(CCFLAGS0)
 CXXFLAGS1=-c -std=c++98 -D_GNU_SOURCE=1 -I. -Ilib $(CXXFLAGS0) $(FLAGS0)
 CXXFLAGS2=-Wl,-z,noexecstack $(CXXFLAGS0) -Lobj -pie -Wl,-z,relro -Wl,-z,now
@@ -28,7 +28,8 @@ debug: create_dirs zerovm
 	@printf "FUNCTIONAL TESTS %048o\n" 0
 	@./ftests.sh
 
-OBJS=obj/manifest.o obj/setup.o obj/channel.o obj/qualify.o obj/report.o obj/zlog.o obj/signal_common.o obj/signal.o obj/to_app.o obj/switch_to_app.o obj/to_trap.o obj/syscall_hook.o obj/prefetch.o obj/preload.o obj/context.o obj/trap.o obj/etag.o obj/accounting.o obj/daemon.o obj/ztrace.o obj/userspace.o obj/usermap.o obj/serializer.o
+OBJS=obj/manifest.o obj/setup.o obj/channel.o obj/qualify.o obj/report.o obj/zlog.o obj/signal_common.o obj/signal.o obj/to_app.o obj/switch_to_app.o obj/to_trap.o obj/syscall_hook.o obj/prefetch.o obj/preload.o obj/context.o obj/trap.o obj/etag.o obj/accounting.o obj/daemon.o obj/ztrace.o obj/userspace.o obj/usermap.o obj/serializer.o obj/zplugin_context.o obj/zplugin_manager.o
+
 CC=@gcc
 CXX=@g++
 
@@ -119,3 +120,10 @@ obj/usermap.o: src/loader/usermap.c
 
 obj/serializer.o: src/channels/serializer.c
 	$(CC) $(CCFLAGS1) -o $@ $^
+
+obj/zplugin_context.o: src/zplugin_manager/zplugin_context.c
+	$(CC) $(CCFLAGS1) -o $@ $^
+
+obj/zplugin_manager.o: src/zplugin_manager/zplugin_manager.c
+	$(CC) $(CCFLAGS1) -o $@ $^
+

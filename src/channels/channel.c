@@ -21,6 +21,9 @@
 #include "src/channels/preload.h"
 #include "src/channels/prefetch.h"
 
+#include "src/zplugin_manager/zplugin_manager.h"
+
+
 #define MAX_CHANNELS_NUMBER 10915
 #define MIN_CHANNELS_NUMBER 3
 
@@ -72,12 +75,18 @@ int32_t ChannelRead(struct ChannelDesc *channel,
         result = -errno;
       break;
     case ProtoOpaque:
-      FetchData(channel, buffer, size);
+      // FetchData(channel, buffer, size);
+      //- rjm plugin selector
+      if( channel->plugin)
+      {
+        result = channel->plugin->read( channel, buffer, size, offset);
+      }
       break;
     default: /* design error */
       ZLOGFAIL(1, EFAULT, "invalid channel source %s", channel->alias);
       break;
   }
+
 
   /* update eof status */
   if(result == 0 && CH_SEQ_READABLE(channel))
@@ -114,12 +123,18 @@ int32_t ChannelWrite(struct ChannelDesc *channel,
       result = fwrite(buffer, 1, size, channel->handle);
       break;
     case ProtoOpaque:
-      result = SendData(channel, buffer, size);
+      // result = SendData(channel, buffer, size);
+      //- rjm plugin selector
+      if( channel->plugin)
+      {
+        result = channel->plugin->write( channel, buffer, size, offset);
+      }
       break;
     default: /* design error */
       ZLOGFAIL(1, EFAULT, "invalid channel source %s", channel->alias);
       break;
   }
+
 
   /* accounting */
   ZLOGFAIL(result < 0, EIO, "%s failed to write: %s",
@@ -179,7 +194,13 @@ static void ChannelCtor(struct ChannelDesc *channel)
   if(IS_FILE(channel))
     PreloadChannelCtor(channel);
   else
-    PrefetchChannelCtor(channel);
+  {
+    // PrefetchChannelCtor(channel);
+    //- rjm plugin selector
+    channel->plugin = plugin_manager->get_plugin_by_channel( channel);
+    ZLOGFAIL( channel->plugin == 0,
+      ENOENT, "Unable to find supported Channel Protocol Plugin");
+  }
 
   /* mark channel as mounted */
   channel->valid = 1;
@@ -197,7 +218,11 @@ static void ChannelDtor(struct ChannelDesc *channel)
   if(IS_FILE(channel))
     PreloadChannelDtor(channel);
   else
-    PrefetchChannelDtor(channel);
+  {
+    //PrefetchChannelDtor(channel);
+    plugin_manager->unload_zplugin( channel->plugin);
+  }
+   
 }
 
 void ChannelsCtor(struct Manifest *manifest)

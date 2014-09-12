@@ -21,6 +21,7 @@
 
 #include "api/zvm.h"
 #include "src/main/tools.h"
+#include "src/zplugin_manager/zplugin_context.h"
 
 EXTERN_C_BEGIN
 
@@ -64,6 +65,9 @@ struct ChannelDesc {
   int64_t getpos; /* channel read position */
   int64_t putpos; /* channel write position */
   int64_t counters[LimitsNumber];
+
+  /* Plugin */
+  plugin_context_t *plugin;
 };
 
 /* zerovm manifest structure */

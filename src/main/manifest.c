@@ -35,6 +35,8 @@
 #include "src/main/zlog.h"
 #include "src/channels/channel.h"
 
+#include "src/zplugin_manager/zplugin_manager.h"
+
 #define MFTFAIL ZLogTag("MANIFEST", cline), FailIf
 
 /* general */
@@ -109,7 +111,15 @@ typedef enum {
   X(Timeout, 1, 1) \
   X(Node, 0, 1) \
   X(Job, 0, 1) \
-  X(Broker, 0, 1)
+  X(Broker, 0, 1) \
+  X(Plugin, 0, 0) \
+  X(Plugin_dir, 0, 0)
+
+  /* rjm Plugin: Plugin DSO name (eg rbroker_plugin.so) */
+  /* rjm Plugin_dir: Directory to search for Plugin DSO
+   *     default: ./plugins  (relative to zerovm execution directory
+   */
+
 #else
 /* (x-macro): manifest keywords (name, obligatory, singleton) */
 #define KEYWORDS \
@@ -120,7 +130,11 @@ typedef enum {
   X(Timeout, 1, 1) \
   X(Node, 0, 1) \
   X(Job, 0, 1) \
-  X(Broker, 0, 1)
+  X(Broker, 0, 1) \
+  X(Plugin, 0, 0) \
+  X(Plugin_dir, 0, 0)
+ 
+
 #endif
 
 /* (x-macro): manifest enumeration, array and statistics */
@@ -435,6 +449,31 @@ static void Channel(struct Manifest *manifest, char *value)
 }
 #endif
 
+/* rjm
+ * Plugin Manifest line parser
+ */
+static void Plugin_dir( struct Manifest *manifest, char *value)
+{
+  if( manifest && value)
+  {
+    plugin_manager->add_plugin_dir( value);
+  }
+
+}
+
+/* rjm
+ * Plugin Manifest line parser
+ */
+static void Plugin( struct Manifest *manifest, char *value)
+{
+  if( manifest && value)
+  {
+    plugin_manager->load_zplugin( value);
+  }
+  
+}
+
+
 /*
  * check if obligatory keywords appeared and check if the fields
  * which should appear only once did so
@@ -506,6 +545,7 @@ struct Manifest *ManifestCtor(const char *name)
   ZLOGFAIL(size < MIN_MFT_SIZE, EFAULT, "manifest is too small");
   fclose(h);
 
+
   return ManifestTextCtor(buf);
 }
 
@@ -531,6 +571,7 @@ void ManifestDtor(struct Manifest *manifest)
   TagDtor(manifest->mem_tag);
   g_free(manifest->boot);
   g_free(manifest);
+
 }
 
 struct Command *CommandPtr()
@@ -538,3 +579,5 @@ struct Command *CommandPtr()
   static struct Command command;
   return &command;
 }
+
+

@@ -33,6 +33,8 @@
 #include "src/loader/userspace.h"
 #include "src/loader/uboot.inc" /* auto generated, do not modify */
 
+#include "src/zplugin_manager/zplugin_manager.h"
+
 static struct Manifest *s_manifest;
 
 struct Manifest *GetManifest()
@@ -172,6 +174,10 @@ void SessionCtor(char *mft)
   nacl_sys = g_malloc(sizeof *nacl_sys);
 
   ZTraceCtor();
+
+  /* initialize plugin manager */
+  zPluginManagerCtor();
+
   manifest = ManifestCtor(mft);
   s_manifest = manifest;
   ZLOGS(LOG_DEBUG, "[manifest parsed]");
