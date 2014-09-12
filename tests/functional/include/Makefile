@@ -1,5 +1,7 @@
 NAME=zvmlib
 
+ZEROVM_ROOT ?= ../../..
+
 all: $(NAME).o bget.o printf.o
 	x86_64-nacl-ar r lib$(NAME).a $^
 
