@@ -101,7 +101,6 @@ zPluginManagerDtor()
 
 ////////////////////////////////////////////////////////////////////////////////
 //-
-#include <stdio.h>
 void
 add_plugin_dir( char *path)
 {
@@ -222,7 +221,6 @@ load_zplugin_by_name( char *name)
 //- 
 //- Returns: a plugin context or null on fail.
 //-
-#include <stdio.h>
 int
 load_zplugin( char *name_or_fullpath)
 {
@@ -285,7 +283,6 @@ unload_zplugin( plugin_context_t *plugin)
 ////////////////////////////////////////////////////////////////////////////////
 //-
 //- Retrieves the plugin 
-#include <stdio.h>
 plugin_context_t *
 get_plugin_by_channel( struct ChannelDesc *channel)
 {
