@@ -4,6 +4,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //-
+struct ChannelDesc;
+
+///////////////////////////////////////////////////////////////////////////////
+//-
 typedef struct
 {
   uint32_t major;
@@ -33,10 +37,10 @@ typedef struct
 
   //////-
   //-
-  struct ChannelDesc * (*open )( char *_string);
-  int       (*close)( struct ChannelDesc *channel);
-  ssize_t   (*read )( struct ChannelDesc *channel,       char *buf, size_t len, off_t offset);
-  ssize_t   (*write)( struct ChannelDesc *channel, const char *buf, size_t len, off_t offset);
+  void    (*open )( struct ChannelDesc *channel);
+  int     (*close)( struct ChannelDesc *channel);
+  ssize_t (*read )( struct ChannelDesc *channel,       char *buf, size_t len, off_t offset);
+  ssize_t (*write)( struct ChannelDesc *channel, const char *buf, size_t len, off_t offset);
 
   //-
   int   (*truncate)( struct ChannelDesc *channel, off_t len);
