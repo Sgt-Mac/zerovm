@@ -468,7 +468,8 @@ static void Plugin( struct Manifest *manifest, char *value)
 {
   if( manifest && value)
   {
-    plugin_manager->load_zplugin( value);
+    int retval = plugin_manager->load_zplugin( value);
+    ZLOGFAIL( retval != 0, EIO, "load_zplugin: [%s] failed. error: [%s]", value, strerror(errno));
   }
   
 }
