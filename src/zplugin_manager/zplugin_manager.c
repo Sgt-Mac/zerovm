@@ -310,7 +310,9 @@ get_plugin_by_channel( struct ChannelDesc *channel)
       //////-
       if( strlen( tokens[1]) > 0)
       {
-        channel->name = g_strdup( tokens[1]);
+        char **name_tokens = g_strsplit( tokens[1], ":", 2);
+        channel->name = g_strdup( name_tokens[1]);
+        g_strfreev( name_tokens);
       }
 
       break;
