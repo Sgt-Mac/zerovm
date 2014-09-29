@@ -88,6 +88,9 @@ int32_t ChannelRead(struct ChannelDesc *channel,
   }
 
 
+  ZLOGFAIL(result < 0, EIO, "%s failed to read: %s",
+      channel->alias, strerror(errno));
+
   /* update eof status */
   if(result == 0 && CH_SEQ_READABLE(channel))
       channel->eof = 1;
@@ -201,7 +204,7 @@ static void ChannelCtor(struct ChannelDesc *channel)
     ZLOGFAIL( channel->plugin == 0,
       ENOENT, "Unable to find supported Channel Protocol Plugin");
     channel->plugin->open( channel);
-    ZLOGFAIL(channel->handle == NULL, EIO, "cannot open %s", channel->name);
+    ZLOGFAIL(channel->handle == NULL, EIO, "cannot open %s Errno:%d", channel->name, errno);
     ZLOGS(LOG_DEBUG, "%s opened", channel->alias);
   }
 
