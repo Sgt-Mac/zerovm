@@ -1,0 +1,19 @@
+Channel = /dev/stdin , /dev/stdin, 0, 0, 1, 1, 0, 0
+Channel = /dev/stdout, /dev/stdout, 0, 0, 0, 0, 1, 1
+Channel = /dev/stderr, /dev/stderr, 0, 0, 0, 0, 1, 1
+
+=Channel = opaque:simple_udp:udp:127.0.0.1:9000, /dev/pipeout, 0, 1, 0  , 0   , 100, 1000
+=Channel = opaque:simple_udp:udp:127.0.0.1:9000, /dev/pipein , 0, 1, 100, 1000, 0  , 0
+Channel= opaque:simple_udp:udp:127.0.0.1:9000, /dev/test   , 0, 1, 100, 1000, 100, 1000
+
+=====================================================================
+== Plugin Info
+=====================================================================
+Plugin_dir = PWD/bin
+Plugin     = libsimpleudpplugin.so
+
+
+Version = 20140509
+Memory = 33554432, 0
+Timeout = 5
+Program = PWD/bin/hello_world.nexe
